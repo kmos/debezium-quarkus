@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.debezium</groupId>
@@ -8,16 +7,36 @@
         <version>3.5.0-SNAPSHOT</version>
     </parent>
 
-    <name>Debezium Quarkus :: Extensions Parent</name>
-    <description>Debezium Parent Module for Quarkus extensions</description>
-
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>debezium-quarkus-extensions-parent</artifactId>
-
     <version>3.5.0-SNAPSHOT</version>
+    <name>Debezium Quarkus :: Extensions Parent</name>
     <packaging>pom</packaging>
+    <description>Debezium Parent Module for Quarkus extensions</description>
+    <url>https://debezium.io</url>
 
-    <properties>
-        <version.debezium>3.5.0-SNAPSHOT</version.debezium>
+    <scm>
+        <connection>scm:git:git@github.com:debezium/debezium-quarkus.git</connection>
+        <developerConnection>scm:git:git@github.com:debezium/debezium-quarkus.git</developerConnection>
+        <url>https://github.com/debezium/debezium-quarkus</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/debezium/dbz/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache Software License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+     <properties>
+        <version.debezium>${project.version}</version.debezium>
 
         <!-- Defines the Quarkus version used for all Debezium Quarkus Extensions -->
         <quarkus.version>3.30.5</quarkus.version>
@@ -169,25 +188,5 @@
         <module>debezium-quarkus-outbox-reactive</module>
         <module>debezium-quarkus-parent</module>
     </modules>
-
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/debezium/dbz/issues</url>
-    </issueManagement>
-
-    <licenses>
-        <license>
-            <name>Apache Software License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git@github.com:debezium/debezium-quarkus.git</connection>
-        <developerConnection>scm:git:git@github.com:debezium/debezium-quarkus.git</developerConnection>
-        <url>https://github.com/debezium/debezium-quarkus</url>
-        <tag>HEAD</tag>
-    </scm>
 
 </project>
