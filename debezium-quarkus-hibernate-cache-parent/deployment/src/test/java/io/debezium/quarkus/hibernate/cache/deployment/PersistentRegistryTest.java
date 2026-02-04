@@ -52,4 +52,10 @@ public class PersistentRegistryTest {
     void givenEntityCachedWhenRetrievingForItThenReturnTrue() {
         assertThat(registry.isCached("<default>", "Order")).isTrue();
     }
+
+    @Test
+    @DisplayName("given entity cached with different name when retrieving for it then return true")
+    void givenEntityCachedWithDifferentNameWhenRetrievingForItThenReturnTrue() {
+        assertThat(registry.isCached("<default>", "PRODUCT")).isTrue();
+    }
 }
