@@ -47,7 +47,7 @@ Using **Gradle**:
 implementation("io.debezium.quarkus:debezium-quarkus-postgres:${version.debezium}")
 ```
 
-The Engine extension brings Quarkus-native configuration and listener APIs for consuming CDC events in-process. See the https://debezium.io/documentation/reference/stable/integrations/debezium-quarkus-engine-extension.html[documentation] for features and setup details.
+The Engine extension brings Quarkus-native configuration and listener APIs for consuming CDC events in-process. See the https://debezium.io/documentation/reference/stable/integrations/quarkus-debezium-engine-extension.html[documentation] for features and setup details.
 
 === Add the Outbox extension to your Quarkus application
 
