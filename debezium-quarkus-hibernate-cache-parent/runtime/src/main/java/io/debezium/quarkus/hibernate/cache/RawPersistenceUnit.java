@@ -9,17 +9,18 @@ package io.debezium.quarkus.hibernate.cache;
 import java.util.List;
 import java.util.Optional;
 
-public record PersistenceUnit(
+public record RawPersistenceUnit(
         String name,
-        List<JpaInfo> infos,
+        List<RawJpaInfo> rawJpaInfo,
         CacheMode mode) {
-    public record JpaInfo(
+
+    public record RawJpaInfo(
             String name,
             String table,
             Optional<String> hibernateId,
             Optional<String> hibernateIdType,
             boolean cached,
             String persistentUnit,
-            Class<?> clazz) {
+            String fqcn) {
     }
 }
