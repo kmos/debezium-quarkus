@@ -11,8 +11,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Order {
 
     @Id
