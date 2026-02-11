@@ -6,6 +6,8 @@
 
 package io.debezium.quarkus.hibernate.cache.deployment;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.inject.Inject;
 
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +21,6 @@ import io.debezium.quarkus.hibernate.cache.deployment.entities.Product;
 import io.debezium.quarkus.hibernate.cache.deployment.entities.User;
 import io.quarkus.test.QuarkusUnitTest;
 import io.quarkus.test.common.QuarkusTestResource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTestResource(PostgresResource.class)
 public class PersistentRegistryTest {
@@ -45,24 +45,24 @@ public class PersistentRegistryTest {
     @Test
     @DisplayName("given entity not cached explicitly when retrieving for it then return false")
     void givenEntityNotCachedExplicitlyWhenRetrievingForItThenReturnFalse() {
-        assertThat(registry.isCached("<default>", "Fruit")).isFalse();
+        assertThat(registry.isCached("default", "fruit")).isFalse();
     }
 
     @Test
     @DisplayName("given entity not cached when retrieving for it then return false")
     void givenEntityNotCachedWhenRetrievingForItThenReturnFalse() {
-        assertThat(registry.isCached("<default>", "User")).isFalse();
+        assertThat(registry.isCached("default", "user")).isFalse();
     }
 
     @Test
     @DisplayName("given entity cached when retrieving for it then return true")
     void givenEntityCachedWhenRetrievingForItThenReturnTrue() {
-        assertThat(registry.isCached("<default>", "Order")).isTrue();
+        assertThat(registry.isCached("default", "order")).isTrue();
     }
 
     @Test
     @DisplayName("given entity cached with different name when retrieving for it then return true")
     void givenEntityCachedWithDifferentNameWhenRetrievingForItThenReturnTrue() {
-        assertThat(registry.isCached("<default>", "PRODUCT")).isTrue();
+        assertThat(registry.isCached("default", "PRODUCT")).isTrue();
     }
 }
