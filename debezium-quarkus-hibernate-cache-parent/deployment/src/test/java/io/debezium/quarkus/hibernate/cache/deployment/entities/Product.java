@@ -13,9 +13,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Table(name = "PRODUCT", schema = "inventory")
 @Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Product {
 
     @Id
