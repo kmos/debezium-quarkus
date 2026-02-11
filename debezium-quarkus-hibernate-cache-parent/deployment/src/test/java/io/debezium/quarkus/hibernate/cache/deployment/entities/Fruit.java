@@ -10,8 +10,12 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Cacheable(value = false)
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Fruit {
     @Id
     private Long id;
