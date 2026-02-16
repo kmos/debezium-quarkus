@@ -16,6 +16,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 public abstract class ReplicaConfigurationEnhancer implements DebeziumConfigurationEnhancer {
 
     public static final String QUARKUS_DEBEZIUM_REPLICA = "quarkus.debezium.replica";
+    public static final long MAX = 0x7FFF_FFFFL;
     private final Config config = ConfigProvider.getConfig();
 
     @Override
@@ -42,7 +43,7 @@ public abstract class ReplicaConfigurationEnhancer implements DebeziumConfigurat
     }
 
     private int calculateRandomly() {
-        return (int) (UUID.randomUUID().getLeastSignificantBits() & 0x7FFF_FFFFL);
+        return (int) (UUID.randomUUID().getLeastSignificantBits() & MAX);
     }
 
     public abstract String property();
