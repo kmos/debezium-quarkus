@@ -14,6 +14,8 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.hibernate.SessionFactory;
 
 import io.debezium.runtime.CapturingEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DebeziumCacheInvalidatorProducer {
 
@@ -46,6 +48,7 @@ public class DebeziumCacheInvalidatorProducer {
 
         private final SessionFactory sessionFactory;
         private final PersistenceUnitRegistry persistenceUnitRegistry;
+        private static final Logger LOGGER = LoggerFactory.getLogger(HibernateRegionEvictionStrategy.class);
 
         private HibernateRegionEvictionStrategy(SessionFactory sessionFactory,
                                                 PersistenceUnitRegistry persistenceUnitRegistry) {
@@ -56,11 +59,18 @@ public class DebeziumCacheInvalidatorProducer {
         @Override
         public void evict(InvalidationEvent event) {
             if (!persistenceUnitRegistry.isCached(event.engine(), event.table())) {
+                LOGGER.debug("the invalidation event for table {} and unit {} is not registered for cache invalidation",
+                        event.table(),
+                        event.engine());
                 return;
             }
 
             persistenceUnitRegistry.retrieve(event.engine(), event.table())
-                    .ifPresent(clazz -> sessionFactory.getCache().evictEntityData(clazz));
+                    .ifPresentOrElse(clazz -> sessionFactory.getCache().evictEntityData(clazz), () -> {
+                        LOGGER.debug("hibernate entity not found for invalidation event for table {} and unit {}",
+                                event.table(),
+                                event.engine());
+                    });
         }
     }
 
