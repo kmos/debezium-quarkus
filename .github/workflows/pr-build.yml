@@ -94,9 +94,107 @@ jobs:
       - uses: debezium/debezium/.github/actions/checkstyle-format@main
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  # This job is responsible for inspecting the changes in the repository and setting specific output variables
+  # that subsequent jobs can use to determine whether a particular job should be skipped or included.
+  file_changes:
+    name: "Detect repository changes"
+    needs: [ check-signed-commits ]
+    runs-on: ubuntu-latest
+    outputs:
+      common-changed: ${{ steps.changed-files-common.outputs.any_changed }}
+      outbox-changed: ${{ steps.changed-files-outbox.outputs.any_changed }}
+      core-changed: ${{ steps.changed-files-core.outputs.any_changed }}
+      testing-changed: ${{ steps.changed-files-testing.outputs.any_changed }}
+      mongodb-changed: ${{ steps.changed-files-mongodb.outputs.any_changed }}
+      mariadb-changed: ${{ steps.changed-files-mariadb.outputs.any_changed }}
+      mysql-changed: ${{ steps.changed-files-mysql.outputs.any_changed }}
+      postgresql-changed: ${{ steps.changed-files-postgresql.outputs.any_changed }}
+      oracle-changed: ${{ steps.changed-files-oracle.outputs.any_changed }}
+      sqlserver-changed: ${{ steps.changed-files-sqlserver.outputs.any_changed }}
+      db2-changed: ${{ steps.changed-files-db2.outputs.any_changed }}
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Get modified files (Common)
+        id: changed-files-common
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            pom.xml
+            .mvn/**
+            .github/actions/**
+            .github/workflows/pr-build.yml
+      - name: Get modified files (Outbox)
+        id: changed-files-outbox
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-outbox/**
+            debezium-quarkus-outbox-common/**
+            debezium-quarkus-outbox-reactive/**
+      - name: Get modified files (Core)
+        id: changed-files-core
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-engine-spi-parent/**
+            debezium-quarkus-parent/debezium-quarkus-engine-parent/**
+            debezium-quarkus-parent/debezium-quarkus-agroal-parent/**
+      - name: Get modified files (Testing)
+        id: changed-files-testing
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-testsuite-parent/**
+      - name: Get modified files (MongoDB)
+        id: changed-files-mongodb
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-mongodb-parent/**
+      - name: Get modified files (MySQL)
+        id: changed-files-mysql
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-mysql-parent/**
+      - name: Get modified files (MariaDB)
+        id: changed-files-mariadb
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-mariadb-parent/**
+      - name: Get modified files (PostgreSQL)
+        id: changed-files-postgresql
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-postgresql-parent/**
+      - name: Get modified files (Oracle)
+        id: changed-files-oracle
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-oracle-parent/**
+      - name: Get modified files (SQL Server)
+        id: changed-files-sqlserver
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-sqlserver-parent/**
+      - name: Get modified files (DB2)
+        id: changed-files-db2
+        uses: tj-actions/changed-files@v47.0.2
+        with:
+          files: |
+            debezium-quarkus-parent/debezium-quarkus-sqlserver-parent/**
+
   build_outbox:
     name: "Outbox Extension"
     needs: [ build-debezium-quarkus-dependencies ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.outbox-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -107,6 +205,7 @@ jobs:
   build-debezium-extension-runtime-core:
     name: "Debezium Quarkus Extensions Core"
     needs: [ build-debezium-quarkus-dependencies ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -117,6 +216,7 @@ jobs:
   build-extension-postgres:
     name: "Debezium Quarkus Extensions Postgres - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.postgresql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -128,6 +228,7 @@ jobs:
   build-extension-postgres-multi:
     name: "Debezium Quarkus Extensions Postgres - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.postgresql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -139,6 +240,7 @@ jobs:
   build-extension-oracle:
     name: "Debezium Quarkus Extensions Oracle - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.oracle-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -150,6 +252,7 @@ jobs:
   build-extension-oracle-multi:
     name: "Debezium Quarkus Extensions Oracle - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.oracle-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -161,6 +264,7 @@ jobs:
   build-extension-mysql:
     name: "Debezium Quarkus Extensions Mysql - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mysql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -172,6 +276,7 @@ jobs:
   build-extension-mysql-multi:
     name: "Debezium Quarkus Extensions Mysql - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mysql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -183,6 +288,7 @@ jobs:
   build-extension-mariadb-native:
     name: "Debezium Quarkus Extensions Mariadb - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mariadb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -194,6 +300,7 @@ jobs:
   build-extension-mariadb-multi:
     name: "Debezium Quarkus Extensions Mariadb - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mariadb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -205,6 +312,7 @@ jobs:
   build-extension-sqlserver-native:
     name: "Debezium Quarkus Extensions Sql server - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.sqlserver-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -216,6 +324,7 @@ jobs:
   build-extension-sqlserver-multi:
     name: "Debezium Quarkus Extensions Sql server - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.sqlserver-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -227,6 +336,7 @@ jobs:
   build-extension-mongodb-native:
     name: "Debezium Quarkus Extensions Mongodb - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mongodb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -238,6 +348,7 @@ jobs:
   build-extension-mongodb-multi:
     name: "Debezium Quarkus Extensions Mongodb - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mongodb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -249,6 +360,7 @@ jobs:
   build-extension-db2-native:
     name: "Debezium Quarkus Extensions DB2 - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.db2-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
@@ -258,8 +370,9 @@ jobs:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
           maven-props: "native"
   build-extension-db2-multi:
-    name: "Debezium Quarkus Extensions DB2 - Multi"
+    name: "Debezium Quarkus Extensions DB2 - Multi Engine"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.db2-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
