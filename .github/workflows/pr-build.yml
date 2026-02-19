@@ -193,7 +193,7 @@ jobs:
 
   build_outbox:
     name: "Outbox Extension"
-    needs: [ build-debezium-quarkus-dependencies ]
+    needs: [ build-debezium-quarkus-dependencies, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.outbox-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -204,7 +204,7 @@ jobs:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
   build-debezium-extension-runtime-core:
     name: "Debezium Quarkus Extensions Core"
-    needs: [ build-debezium-quarkus-dependencies ]
+    needs: [ build-debezium-quarkus-dependencies, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -215,7 +215,7 @@ jobs:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
   build-extension-postgres:
     name: "Debezium Quarkus Extensions Postgres - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.postgresql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -227,7 +227,7 @@ jobs:
           maven-props: "native"
   build-extension-postgres-multi:
     name: "Debezium Quarkus Extensions Postgres - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.postgresql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -239,7 +239,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-oracle:
     name: "Debezium Quarkus Extensions Oracle - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.oracle-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -251,7 +251,7 @@ jobs:
           maven-props: "native"
   build-extension-oracle-multi:
     name: "Debezium Quarkus Extensions Oracle - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.oracle-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -263,7 +263,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mysql:
     name: "Debezium Quarkus Extensions Mysql - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mysql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -275,7 +275,7 @@ jobs:
           maven-props: "native"
   build-extension-mysql-multi:
     name: "Debezium Quarkus Extensions Mysql - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mysql-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -287,7 +287,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mariadb-native:
     name: "Debezium Quarkus Extensions Mariadb - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mariadb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -299,7 +299,7 @@ jobs:
           maven-props: "native"
   build-extension-mariadb-multi:
     name: "Debezium Quarkus Extensions Mariadb - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mariadb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -311,7 +311,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-sqlserver-native:
     name: "Debezium Quarkus Extensions Sql server - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.sqlserver-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -323,7 +323,7 @@ jobs:
           maven-props: "native"
   build-extension-sqlserver-multi:
     name: "Debezium Quarkus Extensions Sql server - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.sqlserver-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -335,7 +335,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mongodb-native:
     name: "Debezium Quarkus Extensions Mongodb - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mongodb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -347,7 +347,7 @@ jobs:
           maven-props: "native"
   build-extension-mongodb-multi:
     name: "Debezium Quarkus Extensions Mongodb - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.mongodb-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -359,7 +359,7 @@ jobs:
           maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-db2-native:
     name: "Debezium Quarkus Extensions DB2 - Native"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.db2-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -371,7 +371,7 @@ jobs:
           maven-props: "native"
   build-extension-db2-multi:
     name: "Debezium Quarkus Extensions DB2 - Multi Engine"
-    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core, file_changes ]
     if: ${{ needs.file_changes.outputs.common-changed == 'true' || needs.file_changes.outputs.core-changed == 'true' || needs.file_changes.outputs.testing-changed == 'true' || needs.file_changes.outputs.db2-changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
