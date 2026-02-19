@@ -35,4 +35,4 @@ runs:
     - name: Build Debezium Quarkus Extensions
       shell: ${{ inputs.shell }}
       run: >
-        ./mvnw install -B -pl :debezium-quarkus-mariadb-parent -am -amd -D${{maven-props}}
+        ./mvnw install -B -pl :debezium-quarkus-mariadb-parent -am -amd -D${{ inputs.maven-props }}

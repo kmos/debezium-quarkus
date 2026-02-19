@@ -135,7 +135,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-postgres
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-oracle:
     name: "Debezium Quarkus Extensions Oracle - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -157,7 +157,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-oracle
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mysql:
     name: "Debezium Quarkus Extensions Mysql - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -179,7 +179,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-mysql
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mariadb-native:
     name: "Debezium Quarkus Extensions Mariadb - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -201,7 +201,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-mariadb
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-sqlserver-native:
     name: "Debezium Quarkus Extensions Sql server - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -223,7 +223,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-sqlserver
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-mongodb-native:
     name: "Debezium Quarkus Extensions Mongodb - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -245,7 +245,7 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-mongodb
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
   build-extension-db2-native:
     name: "Debezium Quarkus Extensions DB2 - Native"
     needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
@@ -267,4 +267,4 @@ jobs:
       - uses: ./.github/actions/build-debezium-quarkus-db2
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-          maven-props: "-Dquarkus.test.integration-test-profile=multi"
+          maven-props: "quarkus.test.integration-test-profile=multi"
