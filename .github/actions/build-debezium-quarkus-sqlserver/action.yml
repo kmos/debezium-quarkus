@@ -1,5 +1,5 @@
-name: "Build Quarkus Extensions"
-description: "Builds the Debezium Quarkus Extensions"
+name: "Build Debezium Quarkus Extension for sqlserver"
+description: "Builds the Debezium sqlserver Extension"
 
 inputs:
   maven-cache-key:
@@ -31,8 +31,8 @@ runs:
     - name: Build Debezium Quarkus Extensions
       shell: ${{ inputs.shell }}
       run: >
-        ./mvnw install -B -pl :debezium-quarkus-parent -am -amd -Dnative
+        ./mvnw install -B -pl :debezium-quarkus-sqlserver-parent -am -amd -Dnative
     - name: Test Multiengine Debezium Quarkus Extensions
       shell: ${{ inputs.shell }}
       run: >
-        ./mvnw install -B -pl :debezium-quarkus-parent -am -amd -Dquarkus.test.integration-test-profile=multi
+        ./mvnw install -B -pl :debezium-quarkus-sqlserver-parent -am -amd -Dquarkus.test.integration-test-profile=multi

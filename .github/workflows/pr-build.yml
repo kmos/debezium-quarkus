@@ -104,13 +104,83 @@ jobs:
       - uses: ./.github/actions/build-debezium-outbox
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
-  build_extensions:
-    name: "Debezium Quarkus Extensions"
+  build-debezium-extension-runtime-core:
+    name: "Debezium Quarkus Extensions Core"
     needs: [ build-debezium-quarkus-dependencies ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action
         uses: actions/checkout@v6
-      - uses: ./.github/actions/build-quarkus-extensions
+      - uses: ./.github/actions/build-debezium-quarkus-runtime-core
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-postgres:
+    name: "Debezium Quarkus Extensions Postgres"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-postgres
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-oracle:
+    name: "Debezium Quarkus Extensions Oracle"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-oracle
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-mysql:
+    name: "Debezium Quarkus Extensions Mysql"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-mysql
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-mariadb:
+    name: "Debezium Quarkus Extensions Mariadb"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-mariadb
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-sqlserver:
+    name: "Debezium Quarkus Extensions Sql server"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-sqlserver
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-mongodb:
+    name: "Debezium Quarkus Extensions Mongodb"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-mongodb
+        with:
+          maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
+  build-extension-db2:
+    name: "Debezium Quarkus Extensions DB2"
+    needs: [ build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Action
+        uses: actions/checkout@v6
+      - uses: ./.github/actions/build-debezium-quarkus-db2
         with:
           maven-cache-key: debezium-quarkus-PR-build-${{ hashFiles('**/pom.xml') }}
