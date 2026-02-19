@@ -13,6 +13,9 @@ inputs:
     description: "The Java distribution to use"
     required: false
     default: "graalvm"
+  maven-props:
+    description: "Maven properties"
+    required: true
 
 runs:
   using: "composite"
@@ -31,8 +34,4 @@ runs:
     - name: Build Debezium Quarkus Extensions
       shell: ${{ inputs.shell }}
       run: >
-        ./mvnw install -B -pl :debezium-quarkus-postgres-parent -am -amd -Dnative
-    - name: Test Multiengine Debezium Quarkus Extensions
-      shell: ${{ inputs.shell }}
-      run: >
-        ./mvnw install -B -pl :debezium-quarkus-postgres-parent -am -amd -Dquarkus.test.integration-test-profile=multi
+        ./mvnw install -B -pl :debezium-quarkus-postgres-parent -am -amd -D${{maven-props}}
