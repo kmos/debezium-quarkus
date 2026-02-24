@@ -99,6 +99,8 @@ jobs:
           - oracle
           - sqlserver
           - db2
+        multi-engine-timeout:
+          - 120
     steps:
       - name: Checkout Action
         uses: actions/checkout@v6
