@@ -89,8 +89,8 @@ jobs:
     strategy:
       matrix:
         maven-props:
-          - "quarkus.test.integration-test-profile=multi"
-          - "native"
+          - quarkus.test.integration-test-profile=multi
+          - native
         connectors:
           - postgres
           - mysql
