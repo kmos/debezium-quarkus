@@ -67,7 +67,7 @@ public class MySqlEngineProcessor implements QuarkusEngineProcessor<AgroalDataso
     @BuildStep
     @Override
     public DebeziumConnectorBuildItem engine() {
-        return new DebeziumConnectorBuildItem(MYSQL, MySqlEngineProducer.class);
+        return new DebeziumConnectorBuildItem(MYSQL, MySqlEngineProducer.class, MySqlConnector.class);
     }
 
     @BuildStep(onlyIf = NativeOrNativeSourcesBuild.class)
