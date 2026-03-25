@@ -10,6 +10,9 @@
         <version>3.5.0-SNAPSHOT</version>
     </parent>
 
+    <name>Debezium Quarkus :: Test</name>
+    <description>Debezium Extensions for Quarkus test module</description>
+
     <artifactId>debezium-quarkus-test</artifactId>
 
 
