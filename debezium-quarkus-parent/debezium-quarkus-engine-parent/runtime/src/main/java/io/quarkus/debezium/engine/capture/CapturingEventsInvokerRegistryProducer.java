@@ -6,6 +6,7 @@
 
 package io.quarkus.debezium.engine.capture;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class CapturingEventsInvokerRegistryProducer {
     @Produces
     @Dependent
     public CapturingEventsInvokerRegistry<CapturingEvents<Object>> produce() {
-        Map<String, CapturingEventsInvoker> handlers = this.invokers
+        Map<String, CapturingInvoker<CapturingEvents<Object>>> handlers = this.invokers
                 .stream()
                 .collect(Collectors.toMap(CapturingInvoker::generateKey, Function.identity()));
 
@@ -33,6 +34,16 @@ public class CapturingEventsInvokerRegistryProducer {
             return null;
         }
 
-        return event -> handlers.get(event.engine() + "_" + event.destination());
+        return new CapturingEventsInvokerRegistry<>() {
+            @Override
+            public CapturingInvoker<CapturingEvents<Object>> get(CapturingEvents<Object> events) {
+                return handlers.get(events.engine() + "_" + events.destination());
+            }
+
+            @Override
+            public List<CapturingInvoker<CapturingEvents<Object>>> invokers() {
+                return handlers.values().stream().toList();
+            }
+        };
     }
 }

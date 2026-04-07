@@ -17,4 +17,13 @@ public interface GeneralChangeConsumer extends ChangeConsumer<ChangeEvent<Object
     @Override
     void handleBatch(List<ChangeEvent<Object, Object>> records, RecordCommitter<ChangeEvent<Object, Object>> committer)
             throws InterruptedException;
+
+    /**
+     * Controls whether the change consumer supports processing of tombstone events.
+     * it's impossible to have different tombstone configuration in a multi-sink scenario as the configuration is applied to connector level.
+     */
+    @Override
+    default boolean supportsTombstoneEvents() {
+        return ChangeConsumer.super.supportsTombstoneEvents();
+    }
 }

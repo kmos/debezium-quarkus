@@ -19,12 +19,10 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import io.quarkus.debezium.deployment.items.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Singleton;
 
@@ -34,6 +32,7 @@ import org.apache.kafka.connect.source.SourceTask;
 import org.apache.kafka.connect.transforms.predicates.TopicNameMatches;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
+import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 
 import io.debezium.connector.common.BaseSourceConnector;
@@ -79,12 +78,6 @@ import io.quarkus.arc.deployment.UnremovableBeanBuildItem.BeanClassAnnotationExc
 import io.quarkus.arc.processor.BeanInfo;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.debezium.deployment.dotnames.DebeziumDotNames;
-import io.quarkus.debezium.deployment.items.DebeziumConnectorBuildItem;
-import io.quarkus.debezium.deployment.items.DebeziumExtensionNameBuildItem;
-import io.quarkus.debezium.deployment.items.DebeziumGeneratedCustomConverterBuildItem;
-import io.quarkus.debezium.deployment.items.DebeziumGeneratedInvokerBuildItem;
-import io.quarkus.debezium.deployment.items.DebeziumGeneratedPostProcessorBuildItem;
-import io.quarkus.debezium.deployment.items.DebeziumMediatorBuildItem;
 import io.quarkus.debezium.engine.CompatibleModeConnectorRecorder;
 import io.quarkus.debezium.engine.DebeziumFactory;
 import io.quarkus.debezium.engine.DebeziumRecorder;
@@ -432,7 +425,8 @@ public class EngineProcessor {
     }
 
     @BuildStep
-    public void generateInvokers(List<DebeziumMediatorBuildItem> mediatorBuildItems,
+    public void generateInvokers(List<DebeziumComplexMediatorBuildItem> complexMediatorBuildItems,
+                                 List<DebeziumMediatorBuildItem> mediatorBuildItems,
                                  BuildProducer<GeneratedClassBuildItem> generatedClassBuildItemBuildProducer,
                                  BuildProducer<ReflectiveClassBuildItem> reflectiveClassBuildItemBuildProducer,
                                  BuildProducer<DebeziumGeneratedInvokerBuildItem> debeziumGeneratedInvokerBuildItemBuildProducer,
@@ -440,6 +434,8 @@ public class EngineProcessor {
                                  BuildProducer<DebeziumGeneratedPostProcessorBuildItem> debeziumGeneratedPostProcessorBuildItemmBuildProducer) {
         GeneratedClassGizmoAdaptor classOutput = new GeneratedClassGizmoAdaptor(generatedClassBuildItemBuildProducer,
                 true);
+
+        complexMediatorBuildItems.forEach(a -> {});
 
         CapturingInvokerGenerator capturingInvokerGenerator = new MultipleCapturingInvokerGenerators(
                 new CapturingEventGenerator(classOutput),
@@ -553,14 +549,45 @@ public class EngineProcessor {
 
     @BuildStep
     public void extractMediators(BuildProducer<DebeziumMediatorBuildItem> mediatorBuildItemBuildProducer,
+                                 BuildProducer<DebeziumComplexMediatorBuildItem> complexMediatorBuildItemBuildProducer,
                                  BeanDiscoveryFinishedBuildItem beanDiscoveryFinished) {
 
         DebeziumDotNames dbz = new DebeziumDotNames();
+
+        List<BeanInfo> beansWithMultipleMethodsAnnotated = beanDiscoveryFinished
+                .beanStream()
+                .classBeans()
+                .stream()
+                .filter(dbz::filterSecondary)
+                .filter(dbz::filter)
+                .toList();
+
+        beansWithMultipleMethodsAnnotated
+                .stream()
+                .flatMap(beanInfo -> beanInfo
+                        .getTarget()
+                        .map(target -> target.asClass().methods())
+                        .stream()
+                        .flatMap(Collection::stream)
+                        .filter(dbz::filter)
+                        .map(principal -> new DebeziumComplexMediatorBuildItem(
+                                beanInfo,
+                                principal,
+                                dbz.get(principal),
+                                beanInfo.getImplClazz()
+                                        .methods()
+                                        .stream()
+                                        .filter(dbz::filterSecondary)
+                                        .map(methodInfo -> Map.entry(dbz.getSecondary(methodInfo), methodInfo))
+                                        .filter(a -> Objects.nonNull(a.getKey()))
+                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))))
+                        .forEach(complexMediatorBuildItemBuildProducer::produce);
 
         beanDiscoveryFinished
                 .beanStream()
                 .classBeans()
                 .stream()
+                .filter(bean -> !beansWithMultipleMethodsAnnotated.contains(bean))
                 .filter(dbz::filter)
                 .flatMap(beanInfo -> beanInfo
                         .getTarget()

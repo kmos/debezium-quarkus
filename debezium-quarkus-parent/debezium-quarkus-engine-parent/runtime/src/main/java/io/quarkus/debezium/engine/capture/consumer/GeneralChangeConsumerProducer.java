@@ -8,8 +8,10 @@ package io.quarkus.debezium.engine.capture.consumer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.quarkus.debezium.engine.capture.CapturingInvoker;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Produces;
 
@@ -120,6 +122,15 @@ public class GeneralChangeConsumerProducer {
                 catch (InterruptedException e) {
                     throw new DebeziumException(e);
                 }
+            }
+
+            @Override
+            public boolean supportsTombstoneEvents() {
+                return Optional.ofNullable(registry
+                                .invokers()
+                                .getFirst())
+                        .map(CapturingInvoker::supportsTombstoneEvents)
+                        .orElseGet(GeneralChangeConsumer.super::supportsTombstoneEvents);
             }
         };
     }

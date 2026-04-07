@@ -33,6 +33,10 @@ public interface CapturingInvoker<T> {
      */
     String engine();
 
+    default boolean supportsTombstoneEvents() {
+        return true;
+    }
+
     static String generateKey(CapturingInvoker invoker) {
         return invoker.engine() + "_" + invoker.destination();
     }

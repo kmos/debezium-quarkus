@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.debezium.runtime.TombstoneSupport;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -93,6 +94,21 @@ public class CapturingTest {
                 .untilAsserted(() -> assertThat(captureProductsHandler.getUsers()).containsExactlyInAnyOrder(
                         new User(1, "giovanni", "developer"),
                         new User(2, "mario", "developer")));
+    }
+
+    @ApplicationScoped
+    static class CaptureTombstoneHandler {
+        private final AtomicBoolean invoked = new AtomicBoolean(false);
+
+        @Capturing()
+        public void capture() {
+            invoked.set(true);
+        }
+
+        @TombstoneSupport
+        public boolean support() {
+            return false;
+        }
     }
 
     @ApplicationScoped

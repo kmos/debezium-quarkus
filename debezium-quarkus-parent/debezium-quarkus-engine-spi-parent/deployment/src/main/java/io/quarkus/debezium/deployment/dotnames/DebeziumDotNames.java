@@ -9,14 +9,15 @@ package io.quarkus.debezium.deployment.dotnames;
 import java.util.List;
 import java.util.Objects;
 
-import org.jboss.jandex.AnnotationInstance;
-import org.jboss.jandex.DotName;
-import org.jboss.jandex.MethodInfo;
-
 import io.debezium.runtime.Capturing;
 import io.debezium.runtime.CustomConverter;
 import io.debezium.runtime.FieldFilterStrategy;
 import io.debezium.runtime.PostProcessing;
+import io.debezium.runtime.TombstoneSupport;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.MethodInfo;
+
 import io.quarkus.arc.processor.BeanInfo;
 
 public class DebeziumDotNames {
@@ -28,7 +29,10 @@ public class DebeziumDotNames {
     public static final DotName POST_PROCESSING = DotName.createSimple(PostProcessing.class.getName());
     public static final DotName CUSTOM_CONVERTER = DotName.createSimple(CustomConverter.class.getName());
     public static final DotName FIELD_FILTER_STRATEGY = DotName.createSimple(FieldFilterStrategy.class.getName());
+    public static final DotName TOMBSTONE_SUPPORT = DotName.createSimple(TombstoneSupport.class.getName());
+
     public static final List<DotName> dotNames = List.of(CAPTURING, POST_PROCESSING, CUSTOM_CONVERTER);
+    public static final List<DotName> secondaries = List.of(TOMBSTONE_SUPPORT);
 
     public boolean filter(BeanInfo info) {
         return info.getTarget()
@@ -56,4 +60,34 @@ public class DebeziumDotNames {
                 .orElse(null);
     }
 
+    public DotName getSecondary(MethodInfo info) {
+        return secondaries
+                .stream()
+                .map(info::annotation)
+                .filter(Objects::nonNull)
+                .map(AnnotationInstance::name)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean filterSecondary(MethodInfo info) {
+        return info.annotations()
+                .stream()
+                .anyMatch(instance -> secondaries
+                        .stream()
+                        .anyMatch(debeziumDotName -> debeziumDotName.equals(instance.name())));
+    }
+
+    public boolean filterSecondary(BeanInfo beanInfo) {
+        return beanInfo.getTarget()
+                .map(annotation -> annotation.asClass().methods()
+                        .stream()
+                        .anyMatch(info ->
+                                info.annotations()
+                                        .stream()
+                                        .anyMatch(instance -> secondaries
+                                                .stream()
+                                                .anyMatch(debeziumDotName -> debeziumDotName.equals(instance.name())))))
+                .orElse(false);
+    }
 }

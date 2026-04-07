@@ -6,6 +6,10 @@
 
 package io.quarkus.debezium.engine.capture;
 
+import java.util.List;
+
 public interface CapturingEventsInvokerRegistry<T> {
     CapturingInvoker<T> get(T identifier);
+
+    List<CapturingInvoker<T>> invokers();
 }
