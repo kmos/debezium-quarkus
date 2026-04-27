@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.quarkus.debezium.engine.CapturingEventDeserializer;
 import io.quarkus.debezium.engine.SourceRecordDeserializer;
 
@@ -30,8 +31,8 @@ public class CapturingEventDeserializerRegistryProducer {
 
     @Produces
     @Singleton
-    public CapturingEventDeserializerRegistry<SourceRecord, SourceRecord> produce(DebeziumEngineConfiguration configuration) {
-        Map<String, CapturingEventDeserializer<?, SourceRecord, SourceRecord>> nestedDeserializers = configuration
+    public CapturingEventDeserializerRegistry<SourceRecord, SourceRecord> produce(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
+        Map<String, CapturingEventDeserializer<?, SourceRecord, SourceRecord>> nestedDeserializers = debeziumEngineConfigurationHandler.get()
                 .capturing()
                 .values()
                 .stream()
@@ -39,7 +40,7 @@ public class CapturingEventDeserializerRegistryProducer {
                 .collect(toMap(DebeziumEngineConfiguration.DeserializerConfiguration::destination,
                         config -> getDeserializer(config.deserializer())));
 
-        Map<String, CapturingEventDeserializer<?, SourceRecord, SourceRecord>> deserializers = configuration
+        Map<String, CapturingEventDeserializer<?, SourceRecord, SourceRecord>> deserializers = debeziumEngineConfigurationHandler.get()
                 .capturing()
                 .values()
                 .stream()

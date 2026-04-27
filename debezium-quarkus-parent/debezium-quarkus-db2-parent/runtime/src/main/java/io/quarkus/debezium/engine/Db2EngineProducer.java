@@ -18,7 +18,7 @@ import io.debezium.runtime.ConnectorProducer;
 import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
-import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.quarkus.datasource.common.runtime.DatabaseKind;
 import io.quarkus.debezium.agroal.engine.AgroalParser;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser;
@@ -35,8 +35,9 @@ public class Db2EngineProducer implements ConnectorProducer {
     }
 
     @Override
-    public DebeziumConnectorRegistry engine(DebeziumEngineConfiguration debeziumEngineConfiguration) {
-        List<DebeziumConfigurationEngineParser.MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfiguration, DatabaseKind.DB2,
+    public DebeziumConnectorRegistry engine(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
+        List<DebeziumConfigurationEngineParser.MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfigurationHandler.get(),
+                DatabaseKind.DB2,
                 DB2);
 
         return new DebeziumConnectorRegistry() {

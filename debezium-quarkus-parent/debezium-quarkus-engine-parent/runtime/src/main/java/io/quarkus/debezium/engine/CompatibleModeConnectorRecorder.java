@@ -19,6 +19,7 @@ import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
 import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.debezium.runtime.configuration.QuarkusDatasourceConfiguration;
 import io.quarkus.arc.Arc;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser;
@@ -29,13 +30,13 @@ import io.quarkus.runtime.annotations.Recorder;
 public class CompatibleModeConnectorRecorder {
     private final DebeziumConfigurationEngineParser engineParser = new DebeziumConfigurationEngineParser();
 
-    public Supplier<DebeziumConnectorRegistry> engine(DebeziumEngineConfiguration debeziumEngineConfiguration,
-                                                      Class<? extends BaseSourceConnector> connectorClass) {
+    public Supplier<DebeziumConnectorRegistry> engine(Class<? extends BaseSourceConnector> connectorClass) {
         return () -> {
             /*
              * This is a workaround, we should avoid to get statically beans but `RuntimeValue<>` doesn't work: Quarkus detect this fragment as deployment time
              */
             DebeziumFactory debeziumFactory = Arc.container().instance(DebeziumFactory.class).get();
+            DebeziumEngineConfiguration debeziumEngineConfiguration = Arc.container().instance(DebeziumEngineConfigurationHandler.class).get().get();
             List<MultiEngineConfiguration> multiEngineConfigurations = engineParser.parse(debeziumEngineConfiguration);
 
             if (multiEngineConfigurations.size() > 1) {

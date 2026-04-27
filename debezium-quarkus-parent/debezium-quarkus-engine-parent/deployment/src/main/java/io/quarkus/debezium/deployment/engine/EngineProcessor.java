@@ -77,6 +77,7 @@ import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem.BeanClassAnnotationExclusion;
 import io.quarkus.arc.processor.BeanInfo;
 import io.quarkus.arc.processor.DotNames;
+import io.quarkus.debezium.configuration.ExtensionEngineConfigurationHandler;
 import io.quarkus.debezium.deployment.dotnames.DebeziumDotNames;
 import io.quarkus.debezium.deployment.items.DebeziumConnectorBuildItem;
 import io.quarkus.debezium.deployment.items.DebeziumExtensionNameBuildItem;
@@ -197,6 +198,7 @@ public class EngineProcessor {
 
         additionalBeanProducer.produce(AdditionalBeanBuildItem.builder()
                 .addBeanClasses(
+                        ExtensionEngineConfigurationHandler.class,
                         DefaultNotificationHandler.class,
                         SnapshotHandler.class,
                         QuarkusNotificationChannel.class,
@@ -210,7 +212,6 @@ public class EngineProcessor {
     void produceRegistriesForCompatibilityMode(RecorderContext recorderContext,
                                                BuildProducer<SyntheticBeanBuildItem> syntheticBeanBuildItemBuildProducer,
                                                CompatibleModeConnectorRecorder recorder,
-                                               DebeziumEngineConfiguration debeziumEngineConfiguration,
                                                CurateOutcomeBuildItem curateOutcomeBuildItem,
                                                List<DebeziumConnectorBuildItem> debeziumConnectorBuildItems) {
 
@@ -244,7 +245,7 @@ public class EngineProcessor {
                         SyntheticBeanBuildItem.configure(DebeziumConnectorRegistry.class)
                                 .scope(Singleton.class)
                                 .unremovable()
-                                .supplier(recorder.engine(debeziumEngineConfiguration,
+                                .supplier(recorder.engine(
                                         (Class<? extends BaseSourceConnector>) recorderContext.classProxy(sourceConnector)))
                                 .named(DebeziumConnectorRegistry.class.getName() + sourceConnector)
                                 .setRuntimeInit()
@@ -285,8 +286,9 @@ public class EngineProcessor {
     @BuildStep(onlyIf = NativeOrNativeSourcesBuild.class)
     void registerClassesThatAreLoadedThroughReflection(
                                                        CombinedIndexBuildItem indexBuildItem,
-                                                       BuildProducer<ReflectiveClassBuildItem> reflectiveClasses,
-                                                       DebeziumEngineConfiguration debeziumEngineConfiguration) {
+                                                       BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
+        ExtensionEngineConfigurationHandler extensionEngineConfigurationHandler = new ExtensionEngineConfigurationHandler();
+        DebeziumEngineConfiguration debeziumEngineConfiguration = extensionEngineConfigurationHandler.get();
 
         List<String> classesAnnotatedWithInjectService = DebeziumDotNames.ANNOTATED_WITH_INJECT_SERVICE
                 .stream()

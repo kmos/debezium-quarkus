@@ -21,7 +21,7 @@ import io.debezium.runtime.ConnectorProducer;
 import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
-import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.quarkus.datasource.common.runtime.DatabaseKind;
 import io.quarkus.debezium.agroal.engine.AgroalParser;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser.MultiEngineConfiguration;
@@ -42,8 +42,8 @@ public class PostgresEngineProducer implements ConnectorProducer {
 
     @Produces
     @Singleton
-    public DebeziumConnectorRegistry engine(DebeziumEngineConfiguration debeziumEngineConfiguration) {
-        List<MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfiguration, DatabaseKind.POSTGRESQL, POSTGRES);
+    public DebeziumConnectorRegistry engine(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
+        List<MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfigurationHandler.get(), DatabaseKind.POSTGRESQL, POSTGRES);
 
         return new DebeziumConnectorRegistry() {
             private final Map<String, Debezium> engines = multiEngineConfigurations

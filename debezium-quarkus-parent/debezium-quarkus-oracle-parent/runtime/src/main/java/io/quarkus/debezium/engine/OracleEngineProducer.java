@@ -19,7 +19,7 @@ import io.debezium.runtime.ConnectorProducer;
 import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
-import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.quarkus.datasource.common.runtime.DatabaseKind;
 import io.quarkus.debezium.agroal.engine.AgroalParser;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser.MultiEngineConfiguration;
@@ -39,9 +39,9 @@ public class OracleEngineProducer implements ConnectorProducer {
     @Produces
     @Singleton
     @Override
-    public DebeziumConnectorRegistry engine(DebeziumEngineConfiguration debeziumEngineConfiguration) {
+    public DebeziumConnectorRegistry engine(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
         final List<MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(
-                debeziumEngineConfiguration, DatabaseKind.ORACLE, ORACLE);
+                debeziumEngineConfigurationHandler.get(), DatabaseKind.ORACLE, ORACLE);
 
         return new DebeziumConnectorRegistry() {
             private final Map<String, Debezium> engines = multiEngineConfigurations
