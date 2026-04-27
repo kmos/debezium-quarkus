@@ -23,7 +23,7 @@ import io.debezium.runtime.ConnectorProducer;
 import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
-import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.debezium.runtime.configuration.QuarkusDatasourceConfiguration;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser.MultiEngineConfiguration;
@@ -51,8 +51,8 @@ public class MongoDbEngineProducer implements ConnectorProducer {
     @Produces
     @Singleton
     @Override
-    public DebeziumConnectorRegistry engine(DebeziumEngineConfiguration debeziumEngineConfiguration) {
-        List<MultiEngineConfiguration> multiEngineConfigurations = engineParser.parse(debeziumEngineConfiguration);
+    public DebeziumConnectorRegistry engine(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
+        List<MultiEngineConfiguration> multiEngineConfigurations = engineParser.parse(debeziumEngineConfigurationHandler.get());
 
         /*
          * enrich Quarkus-like debezium configuration with quarkus datasource configuration

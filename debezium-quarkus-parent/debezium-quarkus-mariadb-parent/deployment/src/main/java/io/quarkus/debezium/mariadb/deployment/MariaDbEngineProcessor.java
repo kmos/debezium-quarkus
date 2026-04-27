@@ -42,6 +42,7 @@ import io.quarkus.datasource.deployment.spi.DevServicesDatasourceContainerConfig
 import io.quarkus.datasource.deployment.spi.DevServicesDatasourceProvider;
 import io.quarkus.datasource.deployment.spi.DevServicesDatasourceProviderBuildItem;
 import io.quarkus.debezium.agroal.configuration.AgroalDatasourceConfiguration;
+import io.quarkus.debezium.configuration.ExtensionEngineConfigurationHandler;
 import io.quarkus.debezium.deployment.QuarkusEngineProcessor;
 import io.quarkus.debezium.deployment.items.DebeziumConnectorBuildItem;
 import io.quarkus.debezium.deployment.items.DebeziumExtensionNameBuildItem;
@@ -123,7 +124,8 @@ public class MariaDbEngineProcessor implements QuarkusEngineProcessor<AgroalData
     }
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
-    void devservices(BuildProducer<DevServicesDatasourceProviderBuildItem> devServicesProducer, DebeziumEngineConfiguration debeziumEngineConfiguration) {
+    void devservices(BuildProducer<DevServicesDatasourceProviderBuildItem> devServicesProducer) {
+        DebeziumEngineConfiguration debeziumEngineConfiguration = new ExtensionEngineConfigurationHandler().get();
 
         var mariadb = debeziumEngineConfiguration.devservices().get("mariadb");
         var allServices = debeziumEngineConfiguration.devservices().get("*");

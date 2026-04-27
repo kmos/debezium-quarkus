@@ -23,7 +23,7 @@ import io.debezium.runtime.ConnectorProducer;
 import io.debezium.runtime.Debezium;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.EngineManifest;
-import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
+import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
 import io.quarkus.datasource.common.runtime.DatabaseKind;
 import io.quarkus.debezium.agroal.engine.AgroalParser;
 import io.quarkus.debezium.configuration.DebeziumConfigurationEngineParser.MultiEngineConfiguration;
@@ -44,8 +44,8 @@ public class MariaDbEngineProducer implements ConnectorProducer {
     @Produces
     @Singleton
     @Override
-    public DebeziumConnectorRegistry engine(DebeziumEngineConfiguration debeziumEngineConfiguration) {
-        List<MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfiguration, DatabaseKind.MARIADB, MARIADB);
+    public DebeziumConnectorRegistry engine(DebeziumEngineConfigurationHandler debeziumEngineConfigurationHandler) {
+        List<MultiEngineConfiguration> multiEngineConfigurations = agroalParser.parse(debeziumEngineConfigurationHandler.get(), DatabaseKind.MARIADB, MARIADB);
 
         return new DebeziumConnectorRegistry() {
             private final Map<String, Debezium> engines = multiEngineConfigurations
