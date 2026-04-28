@@ -125,7 +125,7 @@ public class MariaDbEngineProcessor implements QuarkusEngineProcessor<AgroalData
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
     void devservices(BuildProducer<DevServicesDatasourceProviderBuildItem> devServicesProducer) {
-        DebeziumEngineConfiguration debeziumEngineConfiguration = new ExtensionEngineConfigurationHandler().get();
+        DebeziumEngineConfiguration debeziumEngineConfiguration = ExtensionEngineConfigurationHandler.createForBuildTime().get();
 
         var mariadb = debeziumEngineConfiguration.devservices().get("mariadb");
         var allServices = debeziumEngineConfiguration.devservices().get("*");
