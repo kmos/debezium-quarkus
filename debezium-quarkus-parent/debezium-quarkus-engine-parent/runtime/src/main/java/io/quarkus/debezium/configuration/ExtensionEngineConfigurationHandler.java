@@ -9,7 +9,6 @@ package io.quarkus.debezium.configuration;
 import java.lang.annotation.Annotation;
 import java.util.Iterator;
 
-import io.debezium.runtime.configuration.EngineConfigurationOverride;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.util.TypeLiteral;
 import jakarta.inject.Inject;
@@ -17,6 +16,7 @@ import jakarta.inject.Singleton;
 
 import io.debezium.runtime.configuration.DebeziumEngineConfiguration;
 import io.debezium.runtime.configuration.DebeziumEngineConfigurationHandler;
+import io.debezium.runtime.configuration.EngineConfigurationOverride;
 import io.debezium.runtime.configuration.ExtensionDebeziumEngineConfiguration;
 import io.smallrye.config.Config;
 
@@ -29,8 +29,17 @@ public class ExtensionEngineConfigurationHandler implements DebeziumEngineConfig
         this.overrideInstance = overrideInstance;
     }
 
-    public ExtensionEngineConfigurationHandler() {
-        this.overrideInstance = new Instance<>() {
+    @Override
+    public DebeziumEngineConfiguration get() {
+        if (overrideInstance.isResolvable()) {
+            return Config.getOrCreate().getConfigMapping(overrideInstance.get().get());
+        }
+
+        return Config.getOrCreate().getConfigMapping(ExtensionDebeziumEngineConfiguration.class);
+    }
+
+    public static ExtensionEngineConfigurationHandler createForBuildTime() {
+        return new ExtensionEngineConfigurationHandler(new Instance<>() {
             @Override
             public Instance<EngineConfigurationOverride> select(Annotation... qualifiers) {
                 return null;
@@ -80,15 +89,6 @@ public class ExtensionEngineConfigurationHandler implements DebeziumEngineConfig
             public Iterator<EngineConfigurationOverride> iterator() {
                 return null;
             }
-        };
-    }
-
-    @Override
-    public DebeziumEngineConfiguration get() {
-        if (overrideInstance.isResolvable()) {
-            return Config.getOrCreate().getConfigMapping(overrideInstance.get().get());
-        }
-
-        return Config.getOrCreate().getConfigMapping(ExtensionDebeziumEngineConfiguration.class);
+        });
     }
 }
