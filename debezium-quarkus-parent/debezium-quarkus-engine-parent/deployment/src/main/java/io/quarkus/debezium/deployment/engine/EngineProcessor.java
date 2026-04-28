@@ -287,7 +287,7 @@ public class EngineProcessor {
     void registerClassesThatAreLoadedThroughReflection(
                                                        CombinedIndexBuildItem indexBuildItem,
                                                        BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
-        ExtensionEngineConfigurationHandler extensionEngineConfigurationHandler = new ExtensionEngineConfigurationHandler();
+        ExtensionEngineConfigurationHandler extensionEngineConfigurationHandler = ExtensionEngineConfigurationHandler.createForBuildTime();
         DebeziumEngineConfiguration debeziumEngineConfiguration = extensionEngineConfigurationHandler.get();
 
         List<String> classesAnnotatedWithInjectService = DebeziumDotNames.ANNOTATED_WITH_INJECT_SERVICE

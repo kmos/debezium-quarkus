@@ -122,7 +122,7 @@ public class MySqlEngineProcessor implements QuarkusEngineProcessor<AgroalDataso
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
     void devservices(BuildProducer<DevServicesDatasourceProviderBuildItem> devServicesProducer) {
-        DebeziumEngineConfiguration debeziumEngineConfiguration = new ExtensionEngineConfigurationHandler().get();
+        DebeziumEngineConfiguration debeziumEngineConfiguration = ExtensionEngineConfigurationHandler.createForBuildTime().get();
 
         var mysql = debeziumEngineConfiguration.devservices().get("mysql");
         var allServices = debeziumEngineConfiguration.devservices().get("*");

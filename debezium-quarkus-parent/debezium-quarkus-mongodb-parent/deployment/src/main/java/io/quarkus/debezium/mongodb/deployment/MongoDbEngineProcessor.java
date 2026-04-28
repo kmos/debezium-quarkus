@@ -83,7 +83,7 @@ public class MongoDbEngineProcessor implements QuarkusEngineProcessor<MultiEngin
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
     void devservices(BuildProducer<DevServicesResultBuildItem> devServicesProducer) {
-        DebeziumEngineConfiguration debeziumEngineConfiguration = new ExtensionEngineConfigurationHandler().get();
+        DebeziumEngineConfiguration debeziumEngineConfiguration = ExtensionEngineConfigurationHandler.createForBuildTime().get();
 
         var mongoDb = debeziumEngineConfiguration.devservices().get("mongodb");
         var allServices = debeziumEngineConfiguration.devservices().get("*");
