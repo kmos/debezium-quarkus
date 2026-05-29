@@ -90,6 +90,7 @@ import io.quarkus.debezium.deployment.items.DebeziumGeneratedInvokerBuildItem;
 import io.quarkus.debezium.deployment.items.DebeziumGeneratedPostProcessorBuildItem;
 import io.quarkus.debezium.deployment.items.DebeziumMediatorBuildItem;
 import io.quarkus.debezium.engine.CompatibleModeConnectorRecorder;
+import io.quarkus.debezium.engine.DebeziumConnectorsRegistryProducer;
 import io.quarkus.debezium.engine.DebeziumFactory;
 import io.quarkus.debezium.engine.DebeziumRecorder;
 import io.quarkus.debezium.engine.DefaultStateHandler;
@@ -187,6 +188,13 @@ public class EngineProcessor {
                         SourceRecordEventProducer.class,
                         GeneralChangeConsumerProducer.class)
                 .setDefaultScope(DotNames.APPLICATION_SCOPED)
+                .setUnremovable()
+                .build());
+
+        additionalBeanProducer.produce(AdditionalBeanBuildItem
+                .builder()
+                .addBeanClass(DebeziumConnectorsRegistryProducer.class)
+                .setDefaultScope(DotNames.SINGLETON)
                 .setUnremovable()
                 .build());
 
