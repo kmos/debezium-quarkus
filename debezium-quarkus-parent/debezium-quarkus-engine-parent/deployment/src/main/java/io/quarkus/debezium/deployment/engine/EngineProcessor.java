@@ -36,6 +36,8 @@ import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Type;
 
+import io.debezium.connector.base.DefaultQueueProvider;
+import io.debezium.connector.base.QueueProviderService;
 import io.debezium.connector.common.BaseSourceConnector;
 import io.debezium.connector.common.BaseSourceTask;
 import io.debezium.embedded.async.ConvertingAsyncEngineBuilderFactory;
@@ -275,7 +277,7 @@ public class EngineProcessor {
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.snapshot.spi.SnapshotLock"));
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.snapshot.spi.SnapshotQuery"));
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.spi.snapshot.Snapshotter"));
-        resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.spi.snapshot.Snapshotter"));
+        resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.connector.base.QueueProvider"));
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/org.apache.kafka.connect.source.SourceConnector"));
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.pipeline.signal.channels.SignalChannelReader"));
         resources.produce(new NativeImageResourceBuildItem("META-INF/services/io.debezium.pipeline.notification.channels.NotificationChannel"));
@@ -372,6 +374,8 @@ public class EngineProcessor {
                                 .build()));
 
         reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
+                DefaultQueueProvider.class,
+                QueueProviderService.class,
                 WhenNeededNoDataSnapshotter.class,
                 ArcHeartbeatFactory.class,
                 ArcPostProcessorFactory.class,
