@@ -36,6 +36,7 @@ class DebeziumDb2Processor implements QuarkusEngineProcessor<AgroalDatasourceCon
     }
 
     @Override
+    @BuildStep
     public DebeziumConnectorBuildItem engine() {
         return new DebeziumConnectorBuildItem(DB2, Db2EngineProducer.class, Db2Connector.class);
     }
