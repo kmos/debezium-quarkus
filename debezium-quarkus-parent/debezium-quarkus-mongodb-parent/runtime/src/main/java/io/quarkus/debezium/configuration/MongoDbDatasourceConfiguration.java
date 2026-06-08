@@ -7,6 +7,7 @@ package io.quarkus.debezium.configuration;
 
 import static io.debezium.connector.mongodb.shared.SharedMongoDbConnectorConfig.CONNECTION_STRING;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import io.debezium.runtime.configuration.QuarkusDatasourceConfiguration;
@@ -27,7 +28,11 @@ public class MongoDbDatasourceConfiguration implements QuarkusDatasourceConfigur
 
     @Override
     public Map<String, String> asDebezium() {
-        return Map.of(CONNECTION_STRING.name(), connection);
+        return new HashMap<>() {
+            {
+                put(CONNECTION_STRING.name(), connection);
+            }
+        };
     }
 
     @Override

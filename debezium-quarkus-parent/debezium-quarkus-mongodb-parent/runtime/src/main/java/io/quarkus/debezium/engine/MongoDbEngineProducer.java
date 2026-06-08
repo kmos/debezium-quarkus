@@ -18,6 +18,9 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.debezium.connector.mongodb.MongoDbConnector;
 import io.debezium.runtime.Connector;
 import io.debezium.runtime.ConnectorProducer;
@@ -32,7 +35,10 @@ import io.quarkus.debezium.configuration.MultiEngineMongoDbDatasourceConfigurati
 import io.quarkus.debezium.notification.QuarkusNotificationChannel;
 
 public class MongoDbEngineProducer implements ConnectorProducer {
+
     public static final Connector MONGODB = new Connector(MongoDbConnector.class.getName());
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbEngineProducer.class);
     private final Map<String, MongoDbDatasourceConfiguration> quarkusDatasourceConfigurations;
     private DebeziumFactory debeziumFactory;
     private final QuarkusNotificationChannel channel;
@@ -71,7 +77,9 @@ public class MongoDbEngineProducer implements ConnectorProducer {
         mutableConfigurations.compute(NOTIFICATION_ENABLED_CHANNELS.name(),
                 (key, value) -> value == null ? channel.name() : value.concat("," + channel.name()));
 
-        mutableConfigurations.putAll(getQuarkusDatasourceConfigurationByEngineId(engine.engineId(), configurations).asDebezium());
+        Map<String, String> dataSourceConfiguration = getQuarkusDatasourceConfigurationByEngineId(engine.engineId(), configurations).asDebezium();
+
+        dataSourceConfiguration.forEach(mutableConfigurations::putIfAbsent);
         mutableConfigurations.put(CONNECTOR_CLASS.name(), MONGODB.name());
 
         return new MultiEngineConfiguration(engine.engineId(), mutableConfigurations);
@@ -82,7 +90,8 @@ public class MongoDbEngineProducer implements ConnectorProducer {
         QuarkusDatasourceConfiguration configuration = configurations.get(engineId);
 
         if (configuration == null) {
-            throw new IllegalArgumentException("No datasource configuration found for engine " + engineId);
+            LOGGER.warn("No datasource configuration found for engine {}", engineId);
+            return QuarkusDatasourceConfiguration.empty(engineId);
         }
 
         return configuration;
