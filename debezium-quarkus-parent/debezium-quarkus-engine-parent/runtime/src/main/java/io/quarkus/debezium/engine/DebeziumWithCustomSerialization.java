@@ -96,7 +96,7 @@ public class DebeziumWithCustomSerialization extends RunnableDebezium {
 
     private DebeziumEngine<?> getEngine() {
         if (engine == null) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("Debezium Engine is not running");
         }
         return engine;
     }
