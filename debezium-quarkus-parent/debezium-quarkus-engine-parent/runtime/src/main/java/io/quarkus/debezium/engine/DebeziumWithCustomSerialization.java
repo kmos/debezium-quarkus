@@ -43,7 +43,12 @@ public class DebeziumWithCustomSerialization extends RunnableDebezium {
         this.stateHandler = stateHandler;
         this.engineManifest = engineManifest;
         this.engineInstance = () -> {
-            LOGGER.trace("Creating Debezium with Custom Serialization for engine {}", engineManifest);
+            LOGGER.info("Creating Debezium Engine instance {} for Connector {} and serialization - header: {}, key: {}, value: {}",
+                    engineManifest,
+                    connector,
+                    debeziumSerialization.getHeaderFormat().getName(),
+                    debeziumSerialization.getKeyFormat().getName(),
+                    debeziumSerialization.getValueFormat().getName());
             return DebeziumEngine.create(debeziumSerialization.getKeyFormat(),
                     debeziumSerialization.getValueFormat(),
                     debeziumSerialization.getHeaderFormat(),
@@ -87,6 +92,7 @@ public class DebeziumWithCustomSerialization extends RunnableDebezium {
 
     protected void run() {
         this.engine = this.engineInstance.get();
+        LOGGER.info("running engine {} with Debezium Connector {}", engineManifest.id(), this.connector);
         getEngine().run();
     }
 
