@@ -11,6 +11,10 @@ import static io.debezium.config.CommonConnectorConfig.DATABASE_CONFIG_PREFIX;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.debezium.jdbc.JdbcConfiguration;
 import io.debezium.runtime.configuration.DebeziumEngineRuntimeConfiguration;
@@ -29,6 +33,7 @@ import io.quarkus.runtime.annotations.Recorder;
 @Recorder
 public class AgroalCompatibilityDatasourceRecorder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgroalCompatibilityDatasourceRecorder.class);
     private final RuntimeValue<DebeziumEngineRuntimeConfiguration> debeziumEngineConfigurationRuntimeValue;
 
     public AgroalCompatibilityDatasourceRecorder(RuntimeValue<DebeziumEngineRuntimeConfiguration> debeziumEngineConfigurationRuntimeValue) {
@@ -38,6 +43,11 @@ public class AgroalCompatibilityDatasourceRecorder {
     public Supplier<AgroalDatasourceConfiguration> get(List<Datasource> datasourceList) {
         return () -> {
             DebeziumEngineRuntimeConfiguration configuration = debeziumEngineConfigurationRuntimeValue.getValue();
+            String connectors = datasourceList.stream().map(Datasource::connector).map(Class::getName).collect(
+                    Collectors.joining(","));
+
+            LOGGER.info("found Agroal compatible connectors: {}", connectors);
+            LOGGER.info("Agroal default engine: {}", configuration.defaultConfiguration().get(CONNECTOR_CLASS));
 
             return datasourceList.stream()
                     .filter(datasource -> datasource.connector.getName().equals(configuration.defaultConfiguration().get(CONNECTOR_CLASS)))
