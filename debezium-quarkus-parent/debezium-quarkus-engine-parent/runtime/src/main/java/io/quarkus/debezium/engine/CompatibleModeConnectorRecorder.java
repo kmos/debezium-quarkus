@@ -37,7 +37,7 @@ public class CompatibleModeConnectorRecorder {
         this.debeziumEngineConfigurationRuntimeValue = debeziumEngineConfigurationRuntimeValue;
     }
 
-    public Supplier<DebeziumConnectorRegistry> engine(Class<? extends BaseSourceConnector> connectorClass) {
+    public Supplier<DebeziumConnectorRegistry> engine(Class<? extends BaseSourceConnector> connectorClass, boolean overrideConfiguration) {
         return () -> {
             /*
              * This is a workaround, we should avoid to get statically beans but `RuntimeValue<>` doesn't work: Quarkus detect this fragment as deployment time
@@ -61,7 +61,11 @@ public class CompatibleModeConnectorRecorder {
             }
 
             Map<String, String> configuration = multiEngineConfiguration.get().configuration();
-            configuration.put(CONNECTOR_CLASS.name(), connectorClass.getName());
+
+            // to reduce friction, if there is only one dependency it's possible to infer the connector class
+            if (overrideConfiguration) {
+                configuration.put(CONNECTOR_CLASS.name(), connectorClass.getName());
+            }
 
             Map<String, Debezium> engines = Map.of(EngineManifest.DEFAULT.id(),
                     debeziumFactory.get(new Connector(connectorClass.getName()),

@@ -255,16 +255,31 @@ public class EngineProcessor {
                         .contains(sourceConnector))
                 .toList();
 
-        compatibleConnectorClass
-                .forEach(sourceConnector -> syntheticBeanBuildItemBuildProducer.produce(
-                        SyntheticBeanBuildItem.configure(DebeziumConnectorRegistry.class)
-                                .scope(Singleton.class)
-                                .unremovable()
-                                .supplier(recorder.engine(
-                                        (Class<? extends BaseSourceConnector>) recorderContext.classProxy(sourceConnector)))
-                                .named(DebeziumConnectorRegistry.class.getName() + sourceConnector)
-                                .setRuntimeInit()
-                                .done()));
+        // with only one connector, It's possible to infer from the dependency the connector class
+        if (compatibleConnectorClass.size() == 1) {
+            syntheticBeanBuildItemBuildProducer.produce(
+                    SyntheticBeanBuildItem.configure(DebeziumConnectorRegistry.class)
+                            .scope(Singleton.class)
+                            .unremovable()
+                            .supplier(recorder.engine(
+                                    (Class<? extends BaseSourceConnector>) recorderContext.classProxy(compatibleConnectorClass.get(0)), true))
+                            .named(DebeziumConnectorRegistry.class.getName() + compatibleConnectorClass.get(0))
+                            .setRuntimeInit()
+                            .done());
+        }
+        else {
+            compatibleConnectorClass
+                    .forEach(sourceConnector -> syntheticBeanBuildItemBuildProducer.produce(
+                            SyntheticBeanBuildItem.configure(DebeziumConnectorRegistry.class)
+                                    .scope(Singleton.class)
+                                    .unremovable()
+                                    .supplier(recorder.engine(
+                                            (Class<? extends BaseSourceConnector>) recorderContext.classProxy(sourceConnector), false))
+                                    .named(DebeziumConnectorRegistry.class.getName() + sourceConnector)
+                                    .setRuntimeInit()
+                                    .done()));
+        }
+
     }
 
     @BuildStep
