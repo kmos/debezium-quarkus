@@ -5,10 +5,10 @@
  */
 package io.quarkus.sample.app.general.multi;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 

@@ -8,7 +8,7 @@ package io.quarkus.sample.app.events.multi;
 
 import static io.restassured.RestAssured.get;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
