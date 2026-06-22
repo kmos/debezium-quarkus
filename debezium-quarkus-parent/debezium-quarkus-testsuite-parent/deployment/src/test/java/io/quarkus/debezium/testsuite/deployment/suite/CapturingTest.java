@@ -6,7 +6,7 @@
 package io.quarkus.debezium.testsuite.deployment.suite;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.given;
+import static org.awaitility.Awaitility.given;
 
 import java.util.ArrayList;
 import java.util.List;

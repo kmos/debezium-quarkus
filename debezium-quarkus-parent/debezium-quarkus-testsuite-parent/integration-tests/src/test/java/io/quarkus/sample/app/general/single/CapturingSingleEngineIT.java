@@ -5,9 +5,9 @@
  */
 package io.quarkus.sample.app.general.single;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
