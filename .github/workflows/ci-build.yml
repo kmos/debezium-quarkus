@@ -94,6 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ check_style, build-debezium-quarkus-dependencies, build-debezium-extension-runtime-core ]
     strategy:
+      max-parallel: 4
       matrix:
         maven-props:
           - quarkus.test.integration-test-profile=multi
