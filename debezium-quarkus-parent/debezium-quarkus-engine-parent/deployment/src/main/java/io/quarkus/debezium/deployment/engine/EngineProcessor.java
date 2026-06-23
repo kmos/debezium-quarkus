@@ -54,6 +54,7 @@ import io.debezium.pipeline.signal.channels.jmx.JmxSignalChannel;
 import io.debezium.pipeline.signal.channels.process.InProcessSignalChannel;
 import io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory;
 import io.debezium.processors.spi.PostProcessor;
+import io.debezium.relational.ConcurrentMapTableMappingStorage;
 import io.debezium.runtime.CapturingFilterStrategy;
 import io.debezium.runtime.DebeziumConnectorRegistry;
 import io.debezium.runtime.FieldFilterStrategy;
@@ -401,6 +402,7 @@ public class EngineProcessor {
                                 .build()));
 
         reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
+                ConcurrentMapTableMappingStorage.class,
                 DefaultQueueProvider.class,
                 QueueProviderService.class,
                 WhenNeededNoDataSnapshotter.class,
