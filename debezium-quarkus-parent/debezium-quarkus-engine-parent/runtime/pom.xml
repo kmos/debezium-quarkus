@@ -43,7 +43,7 @@
         <dependency>
             <groupId>io.debezium</groupId>
             <artifactId>debezium-common</artifactId>
-            <version>${debezium.version}</version>
+            <version>${version.debezium}</version>
         </dependency>
         <dependency>
             <groupId>io.debezium</groupId>
